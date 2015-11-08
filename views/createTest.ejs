@@ -42,25 +42,30 @@
           <input type="text" id="Title" name="title" autocomplete="off">
           </div>
           <div class="row">
-          <div class="input-field col s4">
-            <select name="rep">
-              <option value="neutral" selected>Neutral</option>
-              <option value="good">Good</option>
-              <option value="bad">Bad</option>
-            </select>
-            <label>Reputation</label>
-          </div>
+            <div class="input-field col s4">
+              <select name="rep">
+                <option value="neutral" selected>Neutral</option>
+                <option value="good">Good</option>
+                <option value="bad">Bad</option>
+              </select>
+              <label>Reputation</label>
+            </div>
           </div>
           <div class="input-field">
           <label for="Description">Description</label>
           <input type="text" id="Description" name="description" autocomplete="off">
           </div>
-          <div class="input-field">
-          <label for="Operator">Operator</label>
-          <input type="text" id="Operator" maxlength="3" name="operator" autocomplete="off">
+          <div class="row">
+            <div class="input-field col s4">
+              <select name="operator">
+                <option value="or" selected>or</option>
+                <option value="and">and</option>
+                <option value="none">none</option>
+              </select>
+              <label>Operator</label>
+            </div>
           </div>
           <div id="fieldsThingy" class="fields">
-
 
             <div id="test" class="row">
 

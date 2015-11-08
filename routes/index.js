@@ -18,20 +18,19 @@ var tests = parseTests.getTests(function(data){
 
 function processCriteria(snps, crit, operator){
 
-
-      var gqlArray = [];
-
-      for(var j in crit){
+    var gqlArray = [];
+      
+    for(var j in crit){
 
         var currObj = crit[j];
 
-        // VERY INSECURE ... DON'T TRY THIS IN PRODUCTION ENVIRONMENT
-        eval("gqlArray.push(gql." + currObj.op + "(currObj.rsid, currObj.genotype));");
-      }
+          // VERY INSECURE ... DON'T TRY THIS IN PRODUCTION ENVIRONMENT
+          eval("gqlArray.push(gql." + currObj.op + "(currObj.rsid, currObj.genotype));");
+    }
 
-      var query =  eval("gql." + operator + "(gqlArray);" );
+    var query =  eval("gql." + operator + "(gqlArray);" );
 
-      return query(snps);
+    return query(snps);
 
 }
 var tests = [
@@ -84,18 +83,23 @@ router.post('/add_test', function(req, res, next){
     for(var i = 0; i < req.body.rsid.length; i++){
 
         var criteriaObj = {};
-        criteriaObj['rsid'] = req.body.rsid[i];
-        criteriaObj['genotype'] = req.body.genotype[i];
-        criteriaObj['op'] = req.body.op[i];
+        criteriaObj['rsid'] = req.body.rsid[i].toLowerCase();
+        criteriaObj['genotype'] = req.body.genotype[i].toUpperCase();
+        criteriaObj['op'] = req.body.op[i].toLowerCase();
 
         criteriaArray.push(criteriaObj);
 
     }
+    console.log(req.body.operator);
+    var operator = req.body.operator;
+    if (operator === 'undefined')
+        operator = 'or';
+
     var value = {
       'title' : req.body.title,
       'rep' : req.body.rep,
       'criteria' : criteriaArray,
-      'operator' : req.body.operator,
+      'operator' : operator.toLowerCase(),
       'description' : req.body.description
       };
     testObject.save(value).then(function(object) {
