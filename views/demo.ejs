@@ -47,6 +47,7 @@
               <input class="file-path validate" type="text" placeholder="Upload a genome file" required>
             </div>
           </div>
+          <button id="sample-test" name="sample-test" class="btn grey darken-4">Sample Test</button>
           <button type="submit" id="processGenome" class="btn grey darken-4">Process</button>
         </form>
         <div id="genome-result">
@@ -88,6 +89,40 @@
   <script src="js/materialize.js"></script>
   <script src="js/init.js"></script>
   <script>
+    $('#sample-test').click(function(e){
+      e.preventDefault();
+      $("#processGenome").html("Processing...");
+
+      $.ajax({
+        type: "POST",
+        url: '/sample_test',
+        data: '',
+        success: function(response){
+        $("#processGenome").html("Process");
+        var htmlString = "<ul class='collection'>";
+
+        for(var i in response){
+
+          var item = '<p><strong>Description</strong>: ' + response[i].description + '<br><strong>Result</strong>: ' + response[i].result + '</li>';
+
+          var li =  "<li class='collection-item avatar'><img src='images/dna.png' class='circle'>"
+
+          li += item;
+
+          htmlString += li;
+
+        }
+
+        htmlString += "</ul><br>";
+
+        $("#genome-result").html(htmlString);
+
+
+      },
+        dataType: 'json'
+      });
+
+    });
     $( "#genome-form" ).submit(function( event ) {
 
         event.preventDefault();

@@ -103,6 +103,32 @@ router.post('/add_test', function(req, res, next){
     });
 
 });
+router.post('/sample_test', function(req, res, next){
+
+    var filepath = "sample_data/23andme-male.txt";
+    fs.readFile(filepath, 'utf-8', function (err, data) {
+      if (err) throw err;
+
+      // parsing dna
+      dna.parse(data, function(err, snps){
+
+        if (err) throw err;
+
+        var responseString = [];
+        for(var i = 0; i < globalData.length; i++){
+
+            var criteriaRes = processCriteria(snps, globalData[i].criteria, globalData[i].operator);
+            responseString.push({description: globalData[i].description, result: criteriaRes});
+
+        }
+        console.log('RESPONSE:' + JSON.stringify(responseString));
+        res.send(JSON.stringify(responseString));
+
+      });
+
+    });
+
+});
 
 router.post('/process_genome', function(req, res, next) {
 
