@@ -17,6 +17,17 @@ var tests = [
             return query(snps);
         },
     'description' : "Immune to Sickle Cell:"
+    },
+    {
+    criteria : function(snps){
+
+            var query = gql.or([
+              gql.exact('rs7025486', 'A'),
+              gql.exact('rs1800796', 'C')
+            ]);
+            return query(snps);
+        },
+    'description' : "Risk of Abdominal aortic aneurysm:"
     }
 ]
 
@@ -46,14 +57,10 @@ router.post('/process_genome', function(req, res, next) {
         // ]);
         // var isMatch = tests.sickelCell(snps);
 
-        var responseString = "";
+        var responseString = [];
         for(var i = 0; i < tests.length; i++){
 
-            var isMatch = tests[i].criteria(snps);
-
-            var resString = tests[i].description + ' ' + isMatch;
-
-            responseString += resString + "<br>";
+            responseString.push({description: tests[i].description, result: tests[i].criteria(snps)})
 
         }
 
