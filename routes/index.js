@@ -72,9 +72,11 @@ router.get('/createtest', function(req, res, next){
 
     res.render('createTest', { title: 'Vital Sines Create Test'});
 });
-
+function error(res){
+    res.send('error invalid file');
+}
 router.post('/add_test', function(req, res, next){
-
+    try{
     var testObject = new TestObject();
 
     var criteriaArray = [];
@@ -90,6 +92,8 @@ router.post('/add_test', function(req, res, next){
 
     }
     var value = {
+      'title' : req.body.title,
+      'rep' : req.body.rep,
       'criteria' : criteriaArray,
       'operator' : req.body.operator,
       'description' : req.body.description
@@ -101,32 +105,49 @@ router.post('/add_test', function(req, res, next){
       });
       res.redirect('/createtest');
     });
+    }catch(err){
+        res.send('invalid');
+    }
 
 });
-router.post('/sample_test', function(req, res, next){
 
-    var filepath = "sample_data/23andme-male.txt";
-    fs.readFile(filepath, 'utf-8', function (err, data) {
-      if (err) throw err;
+function buildResponseString(filename, res) {
+    try{
+    fs.readFile(filename, 'utf-8', function (err, data) {
+      if (err) {
+            throw err;
+        }
+
 
       // parsing dna
       dna.parse(data, function(err, snps){
 
-        if (err) throw err;
+        if (err) {
+            throw err;
+        }
 
         var responseString = [];
         for(var i = 0; i < globalData.length; i++){
 
             var criteriaRes = processCriteria(snps, globalData[i].criteria, globalData[i].operator);
-            responseString.push({description: globalData[i].description, result: criteriaRes});
+            responseString.push({title: globalData[i].title, rep: globalData[i].rep, description: globalData[i].description, result: criteriaRes});
 
         }
-        console.log('RESPONSE:' + JSON.stringify(responseString));
+        // console.log('RESPONSE:' + JSON.stringify(responseString));
         res.send(JSON.stringify(responseString));
 
       });
 
     });
+    }catch(err){
+        res.send('invalid');
+    }
+}
+
+router.post('/sample_test', function(req, res, next){
+
+    var filepath = "sample_data/23andme-male.txt";
+    buildResponseString(filepath, res);
 
 });
 
@@ -135,28 +156,8 @@ router.post('/process_genome', function(req, res, next) {
     //console.log("THE DATA 2: " + JSON.stringify(globalData));
 
     //console.log(req.file);
-    var filename = req.file.originalname;
-    fs.readFile(req.file.path, 'utf-8', function (err, data) {
-      if (err) throw err;
-
-      // parsing dna
-      dna.parse(data, function(err, snps){
-
-        if (err) throw err;
-
-        var responseString = [];
-        for(var i = 0; i < globalData.length; i++){
-
-            var criteriaRes = processCriteria(snps, globalData[i].criteria, globalData[i].operator);
-            responseString.push({description: globalData[i].description, result: criteriaRes});
-
-        }
-
-        res.send(responseString);
-
-      });
-
-    });
+    var filename = req.file.path;
+    buildResponseString(filename, res);
 
 });
 

@@ -36,6 +36,7 @@
     <div class="section">
       <div id="ga" class="card-panel">
         <h5>Genome Analysis</h5>
+        <a href="/createtest">Add a Genome Test</a>
         <p class="light">Upload an image of your eye to check your eye health.</p>
         <form id="genome-form" method="post" enctype="multipart/form-data">
           <div class="file-field input-field">
@@ -90,6 +91,26 @@
   <script src="js/materialize.js"></script>
   <script src="js/init.js"></script>
   <script>
+    function getStyleString(rep, result){
+
+      var greenStr = " style='background: #81F781; border: 1px solid #333; border-bottom: 0px;'";
+      var redStr = " style='background: #F5A9A9;border: 1px solid #333; border-bottom: 0px;'";
+      if(rep == "good" && result){
+        return greenStr;
+      }
+      else if (rep == "good" && !result){
+        return redStr;
+      }
+
+      if(rep == "bad" && result){
+        return redStr;
+      }
+      else if (rep == "bad" && !result){
+        return greenStr;
+      }
+      return " style='border: 1px solid #333; border-bottom: 0px;'";
+
+    }
     $('#sample-test').click(function(e){
       e.preventDefault();
       $("#processGenome").html("Processing...");
@@ -100,13 +121,19 @@
         data: '',
         success: function(response){
         $("#processGenome").html("Process");
-        var htmlString = "<ul class='collection'>";
+        var htmlString = "<ul style='border-bottom: 1px solid #333;' class='collection'>";
 
         for(var i in response){
 
-          var item = '<p><strong>Description</strong>: ' + response[i].description + '<br><strong>Result</strong>: ' + response[i].result + '</li>';
+          var result;
+          if(response[i].result == true){
+             result = '<i class="material-icons">done</i>';
+          }else {
+            result = '<img class="mycon" src="images/x-icon.png" alt="x">';
+          }
+          var item = '<span class="title">' + response[i].title +'</span><p><strong>Description</strong>: ' + response[i].description + '<br><strong>Result</strong>: ' + result + '</li>';
 
-          var li =  "<li class='collection-item avatar'><img src='images/dna.png' class='circle'>"
+          var li =  "<li" + getStyleString(response[i].rep, response[i].result) + "class='collection-item avatar'><img src='images/dna.png' class='circle'>"
 
           li += item;
 
@@ -147,9 +174,15 @@
 
                 for(var i in response){
 
-                  var item = '<p><strong>Description</strong>: ' + response[i].description + '<br><strong>Result</strong>: ' + response[i].result + '</li>';
+                  var result;
+                  if(response[i].result == true){
+                     result = '<i class="material-icons">done</i>';
+                  }else {
+                    result = '<img class="mycon" src="images/x-icon.png" alt="x">';
+                  }
+                  var item = '<span class="title">' + response[i].title +'</span><p><strong>Description</strong>: ' + response[i].description + '<br><strong>Result</strong>: ' + result + '</li>';
 
-                  var li =  "<li class='collection-item avatar'><img src='images/dna.png' class='circle'>"
+                  var li =  "<li" + getStyleString(response[i].rep, response[i].result) + "class='collection-item avatar'><img src='images/dna.png' class='circle'>"
 
                   li += item;
 

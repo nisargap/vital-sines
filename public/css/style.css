@@ -13,7 +13,7 @@
 	font-size: inherit;
 }
 .sponsor-img {
-    
+
     width: 150px;
     margin-right: 10px;
 }
@@ -23,9 +23,9 @@
     margin-right: 10px;
 }
 .meta-img {
-    
+
     width: 50px;
-    
+
 }
 .card-icon {
 
@@ -38,5 +38,8 @@ footer.page-footer{
 }
 .back-color {
     background-color: #FD804E;
-  
+
+}
+.mycon {
+    width: 16px;
 }

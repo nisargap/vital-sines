@@ -35,10 +35,21 @@
       <div id="ga" class="card-panel">
         <h5>Add Test</h5>
         <p class="light">Add a Genome Test</p>
+        <p class="light"><a href="http://www.snpedia.com/index.php/Category:Is_a_medical_condition">SNPedia Medical Condition Encyclopedia</a></p>
         <form action="/add_test" id="add-test-form" method="post">
           <div class="input-field">
           <label for="Title">Title</label>
           <input type="text" id="Title" name="title" autocomplete="off">
+          </div>
+          <div class="row">
+          <div class="input-field col s4">
+            <select name="rep">
+              <option value="neutral" selected>Neutral</option>
+              <option value="good">Good</option>
+              <option value="bad">Bad</option>
+            </select>
+            <label>Reputation</label>
+          </div>
           </div>
           <div class="input-field">
           <label for="Description">Description</label>
@@ -74,6 +85,9 @@
           <br><br>
           <button type="submit" id="addTest" class="btn grey darken-4">Add Test<i class="material-icons right">send</i></button>
         </form>
+        <br>
+        <a href="/demo">Back to Demo</a>
+        <p class="light">Powered by <br> <img src="images/techs/parse-logo.png" width="250px"></p>
       </div>
     </div>
 
@@ -95,6 +109,9 @@
         e.preventDefault();
         location.reload();
       });
+        $(document).ready(function() {
+      $('select').material_select();
+    });
   </script>
 
   </body>
