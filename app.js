@@ -8,6 +8,7 @@ var bodyParser = require('body-parser');
 // var multipart = require('multipart');
 var routes = require('./routes/index');
 var users = require('./routes/users');
+var results = require('./routes/results.js');
 
 var app = express();
 var multer = require('multer');
@@ -32,6 +33,7 @@ app.use(express.static(path.join(__dirname, 'uploads')));
 
 app.use('/', routes);
 app.use('/users', users);
+app.use('/results', results);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
