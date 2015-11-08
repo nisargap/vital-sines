@@ -18,6 +18,7 @@
     "morgan": "~1.6.1",
     "multer": "^1.1.0",
     "multi-part": "^1.0.1",
+    "parse": "^1.6.8",
     "serve-favicon": "~2.3.0"
   }
 }

@@ -4,7 +4,32 @@ var genome = require('../genome/process_genome');
 var fs = require('fs');
 var dna = require('dna2json');
 var gql = require ('gql');
+var parseTests = require('../lib/parseTests');
 
+// THIS IS NOT HOW YOU ARE SUPPOSED TO USE NODE.JS
+var globalData;
+var tests = parseTests.getTests(function(data){
+    globalData = data;
+});
+
+function processCriteria(snps, crit, operator){
+
+
+      var gqlArray = [];
+
+      for(var j in crit){
+
+        var currObj = crit[j];
+
+        // VERY INSECURE ... DON'T TRY THIS IN PRODUCTION ENVIRONMENT
+        eval("gqlArray.push(gql." + currObj.op + "(currObj.rsid, currObj.genotype));");
+      }
+
+      var query =  eval("gql." + operator + "(gqlArray);" );
+
+      return query(snps);
+
+}
 var tests = [
 
     {
@@ -42,6 +67,8 @@ router.get('/demo', function(req, res, next) {
 
 router.post('/process_genome', function(req, res, next) {
 
+    console.log("THE DATA 2: " + JSON.stringify(globalData));
+
     console.log(req.file);
     var filename = req.file.originalname;
     fs.readFile(req.file.path, 'utf-8', function (err, data) {
@@ -58,9 +85,10 @@ router.post('/process_genome', function(req, res, next) {
         // var isMatch = tests.sickelCell(snps);
 
         var responseString = [];
-        for(var i = 0; i < tests.length; i++){
+        for(var i = 0; i < globalData.length; i++){
 
-            responseString.push({description: tests[i].description, result: tests[i].criteria(snps)})
+            var criteriaRes = processCriteria(snps, globalData[i].criteria, globalData[i].operator);
+            responseString.push({description: globalData[i].description, result: criteriaRes});
 
         }
 
@@ -78,7 +106,7 @@ router.post('/process_genome', function(req, res, next) {
     });
 
     //res.send("uploaded " + req.file.originalname);
-}); 
+});
 
 
 module.exports = router;
