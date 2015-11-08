@@ -68,6 +68,12 @@
               <input class="file-path validate" type="text" placeholder="Upload an eye image" required>
             </div>
           </div>
+          <div id="say-cheese-container">
+            <div id="action-buttons">
+              <button class="btn grey darken-4" id="take-snapshot">Capture Eye</button>
+            </div>
+          </div>
+          <button type="button" class="btn grey darken-4" id="capture-eye">Capture Eye<i class="material-icons right">videocam</i></button>
           <button type="submit" class="btn grey darken-4">Process<i class="material-icons right">send</i></button>
         </form>
         <div id="eye-result">
@@ -87,6 +93,7 @@
   <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
   <script src="js/materialize.js"></script>
   <script src="js/init.js"></script>
+  <script src='../lib/say-cheese-1.2.0/say-cheese.js'></script>
   <script>
     $( "#genome-form" ).submit(function( event ) {
 
@@ -134,6 +141,41 @@
     $( "#eye-form" ).submit(function( event ) {
       $("#eye-result").html("Eye Result:");
       event.preventDefault();
+    });
+    
+    $( "#capture-eye").click(function( event ) {
+      var sayCheese = new SayCheese('#say-cheese-container', { audio: false, snapshots: true });
+
+        sayCheese.on('start', function() {
+          $('#action-buttons').fadeIn('fast');
+
+          $('#take-snapshot').on('click', function(evt) {
+            sayCheese.takeSnapshot();
+          });
+        });
+
+        sayCheese.on('error', function(error) {
+
+          if (error === 'NOT_SUPPORTED') {
+            alert("Error: your browser doesn't support video yet!");
+          } else if (error === 'AUDIO_NOT_SUPPORTED') {
+            alert("Error: your browser doesn't support audio yet!");
+          } else {
+            alert("Error: you have to click 'allow' to try me out!");
+          }
+        });
+
+        sayCheese.on('snapshot', function(snapshot) {
+          var img = document.createElement('img');
+
+          $(img).on('load', function() {
+            
+          });
+          img.src = snapshot.toDataURL('image/png');
+        });
+
+        sayCheese.start();
+      });
     });
 
   </script>
