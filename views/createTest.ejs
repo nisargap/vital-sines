@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0"/>
+  <title><%= title %></title>
+
+  <!-- CSS  -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link href="css/materialize.css" type="text/css" rel="stylesheet" media="screen,projection"/>
+  <link href="css/style.css" type="text/css" rel="stylesheet" media="screen,projection"/>
+</head>
+<body>
+  <nav class="grey darken-3" role="navigation">
+    <div class="nav-wrapper container"><a id="logo-container" href="#" style="color:#FD804E;" class="brand-logo">Vital Sines</a>
+      <ul class="right hide-on-med-and-down">
+        <li><a href="/">Home</a></li>
+        <li><a href="#ga">Genome</a></li>
+        <li><a href="#eye">Eye Health</a></li>
+        <li><a href="#fit">Fitness</a></li>
+      </ul>
+
+      <ul id="nav-mobile" class="side-nav">
+        <li><a href="/">Home</a></li>
+        <li><a href="#ga">Genome</a></li>
+        <li><a href="#eye">Eye Health</a></li>
+        <li><a href="#fit">Fitness</a></li>
+      </ul>
+      <a href="#" data-activates="nav-mobile" class="button-collapse"><i class="material-icons">menu</i></a>
+    </div>
+  </nav>
+
+  <div class="container">
+    <div class="section">
+      <div id="ga" class="card-panel">
+        <h5>Add Test</h5>
+        <p class="light">Add a Genome Test</p>
+        <form action="/add_test" id="add-test-form" method="post">
+          <div class="input-field">
+          <label for="Title">Title</label>
+          <input type="text" id="Title" name="title" autocomplete="off">
+          </div>
+          <div class="input-field">
+          <label for="Description">Description</label>
+          <input type="text" id="Description" name="description" autocomplete="off">
+          </div>
+          <div class="input-field">
+          <label for="Operator">Operator</label>
+          <input type="text" id="Operator" maxlength="3" name="operator" autocomplete="off">
+          </div>
+          <div id="fieldsThingy" class="fields">
+
+
+            <div id="test" class="row">
+
+              <div class="input-field col s4">
+               <label for="rsid">rsid</label>
+                <input type="text" id="rsid" name="rsid[]" autocomplete="off">
+              </div>
+              <div class="input-field col s4">
+                <label for="op">op</label>
+                <input type="text" id="op" name="op[]" autocomplete="off">
+              </div>
+              <div class="input-field col s4">
+                <label for="genotype">genotype</label>
+                <input type="text" maxlength="4" id="genotype" name="genotype[]" autocomplete="off">
+              </div>
+
+            </div>
+
+          </div>
+           <button id="addButton" class="btn-floating grey darken-4"><i class="material-icons">add</i></button>
+            <button id="deleteButton" class="btn-floating grey darken-4"><i class="material-icons">delete</i></button>
+          <br><br>
+          <button type="submit" id="addTest" class="btn grey darken-4">Add Test<i class="material-icons right">send</i></button>
+        </form>
+      </div>
+    </div>
+
+  </div>
+
+
+  <!--  Scripts -->
+  <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+  <script src="js/materialize.js"></script>
+  <script src="js/init.js"></script>
+  <script>
+      $("#addButton").click(function(e){
+        e.preventDefault();
+        $("#fieldsThingy").append('<div class="row">' + $("#test").html() + '</div>');
+
+      });
+
+      $("#deleteButton").click(function(e){
+        e.preventDefault();
+        location.reload();
+      });
+  </script>
+
+  </body>
+</html>

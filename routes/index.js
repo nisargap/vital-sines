@@ -4,8 +4,12 @@ var genome = require('../genome/process_genome');
 var fs = require('fs');
 var dna = require('dna2json');
 var gql = require ('gql');
-var parseTests = require('../lib/parseTests');
+var Parse = require('parse/node').Parse;
+var parseKeys = require('../creds/creds');
+Parse.initialize(parseKeys.parse_id, parseKeys.parse_js);
+var TestObject = Parse.Object.extend("Test");
 
+var parseTests = require('../lib/parseTests');
 // THIS IS NOT HOW YOU ARE SUPPOSED TO USE NODE.JS
 var globalData;
 var tests = parseTests.getTests(function(data){
@@ -64,12 +68,47 @@ router.get('/', function(req, res, next) {
 router.get('/demo', function(req, res, next) {
     res.render('demo', { title: 'Vital Sines Demo' });
 });
+router.get('/createtest', function(req, res, next){
+
+    res.render('createTest', { title: 'Vital Sines Create Test'});
+});
+
+router.post('/add_test', function(req, res, next){
+
+    var testObject = new TestObject();
+
+    var criteriaArray = [];
+
+    for(var i = 0; i < req.body.rsid.length; i++){
+
+        var criteriaObj = {};
+        criteriaObj['rsid'] = req.body.rsid[i];
+        criteriaObj['genotype'] = req.body.genotype[i];
+        criteriaObj['op'] = req.body.op[i];
+
+        criteriaArray.push(criteriaObj);
+
+    }
+    var value = {
+      'criteria' : criteriaArray,
+      'operator' : req.body.operator,
+      'description' : req.body.description
+      };
+    testObject.save(value).then(function(object) {
+      console.log("new object saved!");
+      var tests = parseTests.getTests(function(data){
+        globalData = data;
+      });
+      res.redirect('/createtest');
+    });
+
+});
 
 router.post('/process_genome', function(req, res, next) {
 
-    console.log("THE DATA 2: " + JSON.stringify(globalData));
+    //console.log("THE DATA 2: " + JSON.stringify(globalData));
 
-    console.log(req.file);
+    //console.log(req.file);
     var filename = req.file.originalname;
     fs.readFile(req.file.path, 'utf-8', function (err, data) {
       if (err) throw err;
@@ -78,11 +117,6 @@ router.post('/process_genome', function(req, res, next) {
       dna.parse(data, function(err, snps){
 
         if (err) throw err;
-        // var query = gql.or([
-        //   gql.exact('rs334', 'TT'),
-        //   gql.exact('i3003137', 'AA')
-        // ]);
-        // var isMatch = tests.sickelCell(snps);
 
         var responseString = [];
         for(var i = 0; i < globalData.length; i++){
@@ -93,19 +127,11 @@ router.post('/process_genome', function(req, res, next) {
         }
 
         res.send(responseString);
-        // console.log("THE ACTUAL VALUE IS: " + snps.rs12562034.genotype);
 
-
-        //console.log(snps);
-        /*
-        console.log(isMatch); // true or false
-        var resString = "You are " + (isMatch ? "" : "not") + " immune to sickle cell";
-        res.send(resString);*/
       });
 
     });
 
-    //res.send("uploaded " + req.file.originalname);
 });
 
 
