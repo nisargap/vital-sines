@@ -74,7 +74,7 @@
         </div>
       </div>
     </div>
-    
+
     <div id="fit" class="section">
       <div class="card-panel">
         <h5>Fitness</h5>
@@ -103,7 +103,27 @@
         xhr.onreadystatechange = function() {
             if (xhr.readyState == 4) {
                 $("#processGenome").html("Process");
-                $("#genome-result").html("<h1>" + xhr.responseText + "</h1>");
+
+                var response = xhr.responseText;
+                response = JSON.parse(response);
+
+                var htmlString = "<ul class='collection'>";
+
+                for(var i in response){
+
+                  var item = '<p><strong>Description</strong>: ' + response[i].description + '<br><strong>Result</strong>: ' + response[i].result + '</li>';
+
+                  var li =  "<li class='collection-item avatar'><img src='images/dna.png' class='circle'>"
+
+                  li += item;
+
+                  htmlString += li;
+
+                }
+
+                htmlString += "</ul><br>";
+
+                $("#genome-result").html(htmlString);
             }
         }
         xhr.open('POST', '/process_genome', true);
