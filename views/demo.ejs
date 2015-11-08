@@ -33,21 +33,21 @@
   <div class="container">
     <br>
     <h5>Demo</h5>
-    <div id="ga" class="section">
-      <div class="card-panel">
+    <div class="section">
+      <div id="ga" class="card-panel">
         <h5>Genome Analysis</h5>
-        <p class="light">Analyze a DNA genome file for malformities and mutations.</p>
-        <form id="genome-form">
+        <p class="light">Upload an image of your eye to check your eye health.</p>
+        <form id="genome-form" method="post" enctype="multipart/form-data">
           <div class="file-field input-field">
             <div class="btn grey darken-4">
               <span>Upload Genome File</span>
-              <input type="file">
+              <input type="file" id="genomeFile" name="genome-file">
             </div>
             <div class="file-path-wrapper">
-              <input class="file-path validate" type="text" placeholder="Upload a genome sequence" required>
+              <input class="file-path validate" type="text" placeholder="Upload a genome file" required>
             </div>
           </div>
-          <button type="submit" class="btn grey darken-4">Process</button>
+          <button type="submit" id="processGenome" class="btn grey darken-4">Process</button>
         </form>
         <div id="genome-result">
         </div>
@@ -58,11 +58,11 @@
       <div id="eye" class="card-panel">
         <h5>Eye Health Analysis</h5>
         <p class="light">Upload an image of your eye to check your eye health.</p>
-        <form id="eye-form">
+        <form id="eye-form" enctype="multipart/form-data">
           <div class="file-field input-field">
             <div class="btn grey darken-4">
               <span>Upload Eye Image</span>
-              <input type="file">
+              <input type="file" name="eye-image" accept="image/*">
             </div>
             <div class="file-path-wrapper">
               <input class="file-path validate" type="text" placeholder="Upload an eye image" required>
@@ -83,19 +83,39 @@
   </div>
 
 
-  <!--  Scripts-->
+  <!--  Scripts -->
   <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
   <script src="js/materialize.js"></script>
   <script src="js/init.js"></script>
   <script>
     $( "#genome-form" ).submit(function( event ) {
-      $("#genome-result").html("Genome Result:");
-      event.preventDefault();
-    });
+
+        event.preventDefault();
+
+        var file = $("#genomeFile")[0].files[0];
+
+        var formData = new FormData();
+        formData.append('genome-file', file, file.name);
+
+        $("#processGenome").html("Processing...");
+
+        var xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState == 4) {
+                $("#processGenome").html("Process");
+                $("#genome-result").html("<h1>" + xhr.responseText + "</h1>");
+            }
+        }
+        xhr.open('POST', '/process_genome', true);
+
+        xhr.send(formData);
+
+      });
     $( "#eye-form" ).submit(function( event ) {
       $("#eye-result").html("Eye Result:");
       event.preventDefault();
     });
+
   </script>
   </body>
 </html>
