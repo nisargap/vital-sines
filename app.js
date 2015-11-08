@@ -58,3 +58,32 @@ app.use(function(err, req, res, next) {
 
 
 module.exports = app;
+
+
+var gql = require('gql');
+var isMale = require('genoset-male');
+
+function hasSickleCell(dna) {
+  var query = gql.or([
+    gql.exact('rs334', 'TT'),
+    gql.exact('i3003137', 'AA')
+  ]);
+  return query(dna);
+}
+
+function immuneToNorovirus(dna) {
+  var query = gql.exact('rs601338', 'AA');
+  return query(dna);
+}
+
+function runTests(dna) {
+  results = {};
+  results['isMale'] = isMale(dna);
+  results['immuneToNorovirus'] = immuneToNorovirus(dna);
+  results['hasSickleCell'] = hasSickleCell(dna);
+  return results;
+}
+
+var dna = require('./sample_data/23andme-male.json');
+var results = runTests(dna);
+console.log(results);

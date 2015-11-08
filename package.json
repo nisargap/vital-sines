@@ -13,6 +13,7 @@
     "dna2json": "^1.0.1",
     "ejs": "~2.3.3",
     "express": "~4.13.1",
+    "genoset-male": "^1.0.0",
     "gql": "^1.1.0",
     "mongoose": "^4.2.4",
     "morgan": "~1.6.1",
