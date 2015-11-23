@@ -1,21 +1,37 @@
-var express = require('express');
-var router = express.Router();
-var genome = require('../genome/process_genome');
-var fs = require('fs');
-var dna = require('dna2json');
-var gql = require ('gql');
-var Parse = require('parse/node').Parse;
-var parseKeys = require('../creds/creds');
+// importing libraries
+try{
+    var express = require('express');
+    var router = express.Router();
+    var genome = require('../genome/process_genome');
+    var fs = require('fs');
+    var dna = require('dna2json');
+    var gql = require ('gql');
+    var Parse = require('parse/node').Parse;
+    var parseKeys = require('../creds/creds');
+}
+catch(err){
+    
+    console.log("Error in library import");
+    
+}
+
 Parse.initialize(parseKeys.parse_id, parseKeys.parse_js);
+
+// test object needed for genome test storage
 var TestObject = Parse.Object.extend("Test");
 
+// require the tests library
 var parseTests = require('../lib/parseTests');
-// THIS IS NOT HOW YOU ARE SUPPOSED TO USE NODE.JS
+
 var globalData;
+
+// get all the tests
+// TODO: possible race condition in storage of globalData variable
 var tests = parseTests.getTests(function(data){
     globalData = data;
 });
 
+// process critieria that is passed from the tests object
 function processCriteria(snps, crit, operator){
 
     var gqlArray = [];
@@ -24,15 +40,24 @@ function processCriteria(snps, crit, operator){
 
         var currObj = crit[j];
 
-          // VERY INSECURE ... DON'T TRY THIS IN PRODUCTION ENVIRONMENT
+          // eval is not recommended in this situation
+          // but accomplishes the job
+          // TODO: come up with a better solution
           eval("gqlArray.push(gql." + currObj.op + "(currObj.rsid, currObj.genotype));");
     }
-
+    
+    // create the query
     var query =  eval("gql." + operator + "(gqlArray);" );
-
+    
+    // process the query given the snps object, SNPS refers to genome data
+    // that is to be queried
     return query(snps);
 
 }
+
+// old tests object, this is the format that the tests are stored
+// in parse, this commented code is strictly for reference
+/* 
 var tests = [
 
     {
@@ -58,7 +83,9 @@ var tests = [
     'description' : "Risk of Abdominal aortic aneurysm:"
     }
 ]
+*/
 
+// routes
 /* GET home page. */
 router.get('/', function(req, res, next) {
     res.render('index', { title: 'Vital Sines' });
@@ -71,9 +98,11 @@ router.get('/createtest', function(req, res, next){
 
     res.render('createTest', { title: 'Vital Sines Create Test'});
 });
+
 function error(res){
     res.send('error invalid file');
 }
+
 router.post('/add_test', function(req, res, next){
     try{
     var testObject = new TestObject();
